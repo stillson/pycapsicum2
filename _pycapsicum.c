@@ -27,13 +27,12 @@
 /* CR objects */
 
 #define PY_SSIZE_T_CLEAN
-#include <stdio.h>
 #include <stdint.h>
 #include <errno.h>
 #include <fcntl.h>
 
 #include "Python.h"
-#include "sys/capsicum.h"
+#include "sys/capbility.h"
 #include "sys/caprights.h"
 #include "structmember.h"
 
