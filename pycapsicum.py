@@ -471,10 +471,11 @@ class CapRights(object):
         for a_name,a_cap in NAME_2_CAPS.items():
             if self.is_set([a_name]):
                 rval.append(a_name)
-        
+
         return cap_list_fix(rval)
 
     def _get_raw_caps(self,caplist):
+        caplist = cap_list_fix(caplist)
         cap_set = set(caplist)
         return [NAME_2_CAPS[i] for i in cap_set]
 
@@ -490,6 +491,7 @@ class CapRights(object):
         return self.cr.is_valid() == 1
 
     def is_set(self, caplist):
+        caplist = cap_list_fix(caplist)
         raw_cap = self._get_raw_caps(caplist)
         for a_cap in raw_cap:
             if self.cr.is_set(a_cap) == 0:

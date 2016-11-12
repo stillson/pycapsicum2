@@ -105,8 +105,13 @@ CR_set(CRObject *self, PyObject *args)
     for (int i=0; i<n; i++)
     {
         item = PyList_GetItem(new_caps, i);
+#if PYTHON2 == 1
         if (!PyInt_Check(item)) continue;
         cap_rights_set(&self->cr_cap_rights, PyInt_AsLong(item));
+#else
+        if (!PyLong_Check(item)) continue;
+        cap_rights_set(&self->cr_cap_rights, PyLong_AsLong(item));
+#endif
     }
 
     return Py_BuildValue("i", rval);
@@ -128,8 +133,13 @@ CR_clear(CRObject *self, PyObject *args)
     for (int i=0; i<n; i++)
     {
         item = PyList_GetItem(caps_list, i);
+#if PYTHON2 == 1
         if (!PyInt_Check(item)) continue;
         cap_rights_clear(&self->cr_cap_rights, PyInt_AsLong(item));
+#else
+        if (!PyLong_Check(item)) continue;
+        cap_rights_clear(&self->cr_cap_rights, PyLong_AsLong(item));
+#endif
     }
 
     return Py_BuildValue("i", rval);
@@ -357,8 +367,13 @@ capsi_cap_ioctls_limit(PyObject *self, PyObject *args)
     for (i=0; i<n; i++)
     {
         item = PyList_GetItem(cmd_list, i);
+#if PYTHON2 == 1
         if (!PyInt_Check(item)) continue;
         cmds[ncmds++] = PyInt_AsLong(item);
+#else
+        if (!PyLong_Check(item)) continue;
+        cmds[ncmds++] = PyLong_AsLong(item);
+#endif
     }
 
     if (cap_ioctls_limit(fd, cmds, ncmds))
@@ -402,9 +417,15 @@ capsi_cap_ioctls_get(PyObject *self, PyObject *args)
         eff_ncmds = ncmds;
 
     for (int i = 0; i < eff_ncmds; i++)
+#if PYTHON2 == 1
         PyList_Append(rlist, PyInt_FromLong((int)cmds[i]));
 
     return PyTuple_Pack(2, PyInt_FromLong(ncmds), rlist);
+#else
+        PyList_Append(rlist, PyLong_FromLong((int)cmds[i]));
+
+    return PyTuple_Pack(2, PyLong_FromLong(ncmds), rlist);
+#endif
 }
 
 static PyObject*
@@ -495,7 +516,7 @@ init_pycapsicum(void)
     PyObject *m;
 
     if (PyType_Ready(&CR_Type) < 0)
-        return;
+        return NULL;
 
     m = Py_InitModule3("_pycapsicum", capsi_methods, module_doc);
     if (m == NULL)
@@ -516,12 +537,12 @@ PyInit__pycapsicum(void)
     PyObject *m;
 
     if (PyType_Ready(&CR_Type) < 0)
-        return;
+        return NULL;
 
     m = PyModule_Create(&capsi_module);
     if (m == NULL)
         return NULL;
-`
+
     Py_INCREF(&CR_Type);
     PyModule_AddObject(m, "CapRights_", (PyObject*)&CR_Type);
 
