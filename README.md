@@ -19,7 +19,7 @@ Quick Demo:
     import pycapsicum as p
 
     # get a fileno for /tmp
-    t = p.opendir('/tmp',0)
+    t = p.opendir('/tmp', 'rw')
 
     #enter capability mode
     p.enter()
@@ -28,7 +28,7 @@ Quick Demo:
     a = p.CapRights()
 
     # use openat to open a file in tmp
-    x = p.openat(t,'foo',0)
+    x = p.openat(t,'foo', 'rw')
 
     # x is a python file object
     x.readlines()
@@ -111,10 +111,14 @@ For details on the specific functions see the man pages for the man pages.
     Not strictly cap related, openat() allows you to open a file if you
     have the fd (int only) of and opened directory.
 
+    'flags' is either an integer or 'r','w', or 'rw'
+
 ``opendir(path, flags)``:
 
     opendir() allows you to get the FD for a directory (since standard
     python doesn't allow you to call open() on a directory)
+
+    'flags' is either an integer or 'r','w', or 'rw'
 
 
  The CapRights() object:
