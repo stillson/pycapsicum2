@@ -208,6 +208,13 @@ CAP_FCNTL_GETOWN = 1 <<  5 # F_GETOWN = 5
 CAP_FCNTL_SETOWN = 1 <<  6 # F_SETOWN = 6
 CAP_FCNTL_ALL    = CAP_FCNTL_GETFL | CAP_FCNTL_SETFL | CAP_FCNTL_GETOWN | CAP_FCNTL_SETOWN
 
+OPEN_FLAGS = \
+{
+'r' : 0,
+'w' : 1,
+'rw': 2,
+}
+
 def named_caps(caplist):
     return [NAMED_CAPS[i] for i in caplist]
 
@@ -215,6 +222,11 @@ def _fd_check(fd):
     if isinstance(fd, int):
         return fd
     return fd.fileno()
+
+def _rw_flags(flag):
+    if isinstance(flag, int):
+        return flag
+    return(OPEN_FLAGS[flag])
 
 def enter():
     if _pycapsicum.enter() != 0:
@@ -236,21 +248,19 @@ def ioctls_get(fd):
     return _pycapsicum.ioctls_get(_fd_check(fd))
 
 def fcntls_limit(fd, rights):
-    rval, error = _pycapsicum.fcntls_limit(fd, rights)
-    if error != 0:
-        return CapsicumError
-    return rval
+    rval = _pycapsicum.fcntls_limit(_fd_check(fd), rights)
+    if rval != 0:
+        raise CapsicumError
 
 def fcntls_get(fd):
     return _pycapsicum.fcntls_get(_fd_check(fd))
 
 
 def openat(fd, path, flags):
-    return os.fdopen(_pycapsicum.openat(fd, path, flags))
+    return os.fdopen(_pycapsicum.openat(fd, path, _rw_flags(flags)))
 
 def opendir(path, flags):
-    return _pycapsicum.opendir(path, flags)
-
+    return _pycapsicum.opendir(path, _rw_flags(flags))
 
 
 class CapRights(object):
