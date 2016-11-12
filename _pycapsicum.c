@@ -516,7 +516,7 @@ init_pycapsicum(void)
     PyObject *m;
 
     if (PyType_Ready(&CR_Type) < 0)
-        return NULL;
+        return;
 
     m = Py_InitModule3("_pycapsicum", capsi_methods, module_doc);
     if (m == NULL)
