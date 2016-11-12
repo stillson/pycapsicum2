@@ -36,10 +36,17 @@
 #include "sys/caprights.h"
 #include "structmember.h"
 
+#if PY_MAJOR_VERSION == 2
+#define PYTHON2 1
+#elif PY_MAJOR_VERSION == 3
+#define PYTHON3 1
+#else
+#error requires python 2 or 3
+#endif
+
+
 #define AND &&
 #define OR  ||
-
-static PyObject *ErrorObject;
 
 typedef struct {
     PyObject_HEAD
@@ -481,27 +488,43 @@ static PyMethodDef capsi_methods[] = {
 PyDoc_STRVAR(module_doc,
 "Capsicum for python. Spicy snake.");
 
+#if PYTHON2 == 1
 PyMODINIT_FUNC
 init_pycapsicum(void)
 {
     PyObject *m;
 
-    /* Finalize the type object including setting type of the new type
-     * object; doing it here is required for portability, too. */
     if (PyType_Ready(&CR_Type) < 0)
         return;
 
-    /* Create the module and add the functions */
     m = Py_InitModule3("_pycapsicum", capsi_methods, module_doc);
     if (m == NULL)
         return;
 
-    /* Add some symbolic constants to the module */
-    if (ErrorObject == NULL) {
-        ErrorObject = PyErr_NewException("capsi.error", NULL, NULL);
-        if (ErrorObject == NULL)
-            return;
-    }
-
+    Py_INCREF(&CR_Type);
     PyModule_AddObject(m, "CapRights_", (PyObject*)&CR_Type);
 }
+
+#else
+static struct PyModuleDef capsi_module = {
+   PyModuleDef_HEAD_INIT, "_pycapsicum", module_doc, -1, capsi_methods
+};
+
+PyMODINIT_FUNC
+PyInit__pycapsicum(void)
+{
+    PyObject *m;
+
+    if (PyType_Ready(&CR_Type) < 0)
+        return;
+
+    m = PyModule_Create(&capsi_module);
+    if (m == NULL)
+        return NULL;
+`
+    Py_INCREF(&CR_Type);
+    PyModule_AddObject(m, "CapRights_", (PyObject*)&CR_Type);
+
+    return m;
+}
+#endif
