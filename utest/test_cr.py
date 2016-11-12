@@ -22,8 +22,9 @@ class TestCR(unittest.TestCase):
 
 
         caps2 = ['CAP_READ', 'CAP_MMAP', "CAP_LOOKUP"]
+        caps2.sort()
         cr2 = p.CapRights(caps2)
-        self.assertEquals(cr2.caps, caps2)
+        self.assertEquals(sorted(cr2.caps), caps2)
 
         clear_caps = ['CAP_MMAP', 'CAP_FLOCK']
         after_caps = sorted(list(set(caps2) - set(clear_caps)))
