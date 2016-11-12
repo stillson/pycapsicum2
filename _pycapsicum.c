@@ -114,7 +114,7 @@ CR_set(CRObject *self, PyObject *args)
         cap_rights_set(&self->cr_cap_rights, PyInt_AsLong(item));
 #else
         if (!PyLong_Check(item)) continue;
-        cap_rights_set(&self->cr_cap_rights, PyLong_AsLong(item));
+        cap_rights_set(&self->cr_cap_rights, PyLong_AsUnsignedLongLong(item));
 #endif
     }
 
@@ -142,7 +142,7 @@ CR_clear(CRObject *self, PyObject *args)
         cap_rights_clear(&self->cr_cap_rights, PyInt_AsLong(item));
 #else
         if (!PyLong_Check(item)) continue;
-        cap_rights_clear(&self->cr_cap_rights, PyLong_AsLong(item));
+        cap_rights_clear(&self->cr_cap_rights, PyLong_AsUnsignedLong(item));
 #endif
     }
 
@@ -152,10 +152,10 @@ CR_clear(CRObject *self, PyObject *args)
 static PyObject *
 CR_is_set(CRObject *self, PyObject *args)
 {
-    int             rval = 0;
-    unsigned long   check_cap;
+    int                 rval = 0;
+    unsigned long long  check_cap = 0;
 
-    if (!PyArg_ParseTuple(args, "l", &check_cap))
+    if (!PyArg_ParseTuple(args, "K", &check_cap))
         return NULL;
 
     if (cap_rights_is_set(&self->cr_cap_rights, check_cap))
@@ -376,7 +376,7 @@ capsi_cap_ioctls_limit(PyObject *self, PyObject *args)
         cmds[ncmds++] = PyInt_AsLong(item);
 #else
         if (!PyLong_Check(item)) continue;
-        cmds[ncmds++] = PyLong_AsLong(item);
+        cmds[ncmds++] = PyLong_AsUnsignedLong(item);
 #endif
     }
 

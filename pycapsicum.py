@@ -494,9 +494,12 @@ class CapRights(object):
         caplist = cap_list_fix(caplist)
         raw_cap = self._get_raw_caps(caplist)
         for a_cap in raw_cap:
-            if self.cr.is_set(a_cap) == 0:
+            rv = self.cr.is_set(a_cap)
+            if rv == 0:
                 return False
-            return True
+            if rv == 1:
+                return True
+            raise CapsicumError
 
     def merge(self, otherCR):
         self.cr.merge(otherCR.cr)

@@ -31,6 +31,9 @@ class TestCR(unittest.TestCase):
         cr2.clear(clear_caps)
         self.assertEqual( sorted(cr2.caps), after_caps)
 
+        #print('ac',after_caps)
+        #print('caps2',caps2)
+        #print(cr2.caps)
         self.assertTrue( cr2.is_set(after_caps))
         self.assertFalse(cr2.is_set(caps2))
 
