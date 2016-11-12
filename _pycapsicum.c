@@ -32,7 +32,11 @@
 #include <fcntl.h>
 
 #include "Python.h"
+#if OSVERSION < 1020000
 #include "sys/capability.h"
+#else
+#include "sys/capsicum.h"
+#endif
 #include "sys/caprights.h"
 #include "structmember.h"
 

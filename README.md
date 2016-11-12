@@ -3,9 +3,9 @@ pycapsicum
 ==========
 
 Pycapsicum is a python interface to Capsicum (sandboxing for FreeBSD). It
-is works on Freebsd10, but not Freebsd9 (an earlier version supports 9)
+works on FreeBSD10, but not FreeBSD9 (an earlier version supports 9)
 
-I would reccomend you understand capsicum in C before using this module,
+I would recommend you understand capsicum in C before using this module,
 because it's not a simple system to understand.
 
 API
